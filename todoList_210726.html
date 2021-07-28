@@ -59,12 +59,25 @@
             e.preventDefault();
             const currentValue = input.value;
             printToDoList(currentValue);
-            input.value = "";
+            setToDoList(currentValue);
+            saveToDoList();
+            input.value = "";          
         }
 
         // localStorage 저장
         function saveToDoList() {
             localStorage.setItem(TODO_LS, JSON.stringify(todo));
+        }
+
+
+        function setToDoList(currentValue) {
+            const newId = todo.length + 1;
+            const toDoObj = {
+                id: newId,
+                text: currentValue,
+                status: status
+            }
+            todo.push(toDoObj);
         }
 
 
@@ -77,13 +90,23 @@
             const li = checkedBtn.parentNode;
             const targetId = parseInt(li.id, 10);
             const toDoList = JSON.parse(localStorage.getItem(TODO_LS));
-            
-        //   todo = toDoList;
-        //   saveToDoList();
+            console.log(targetId);
+            console.log(JSON.stringify(toDoList));
+
+            toDoList.forEach((el) => {
+                if(targetId === el.id){
+                    el.status = "finished"
+                }
+            });
+            console.log(JSON.stringify(toDoList));
+
+            todo = toDoList;
+            console.log(todo);
+            saveToDoList();
         }
 
         // 할 일 리스트 화면에 뿌리기
-        function printToDoList(currentValue) {
+        function printToDoList(currentValue, currentStatus) {
             const li = document.createElement('li');
             const checkBtn = document.createElement('input');
             const span = document.createElement('span');
@@ -91,36 +114,36 @@
 
             checkBtn.type = 'checkbox'
             checkBtn.addEventListener('click', checkToDoList);
-
+            if(currentStatus === 'finished') {
+                checkBtn.setAttribute('checked', true);
+            }
+            
             span.innerText = currentValue;
-
             li.appendChild(checkBtn);
             li.appendChild(span);
             li.id = newId;
             toDoList.append(li);
 
-
-            const toDoObj = {
-                id: newId,
-                text: currentValue,
-                status: status
-            }
-            todo.push(toDoObj);
-            saveToDoList()
-
         }
-        // localStorage에서 값 받아오기
+        
+        function getDataFromLocalStorage(key) {
+            if(key === null) return false;
+            return localStorage.getItem(key);
+        }
+
+        // localStorage에서 값 받아오기     
         function loadToDoList() {
-            const loadedList = localStorage.getItem(TODO_LS);
-            if(TODO_LS !== null) {
+            const loadedList = getDataFromLocalStorage(TODO_LS);
+            
+            if(!loadedList) {
                 const parsedList = JSON.parse(loadedList);
                 if(!parsedList) return;
                 parsedList.forEach(function(todo) {
-                    printToDoList(todo.text);
+                    printToDoList(todo.text, todo.status);
                 });
             }
-        }
-
+        } 
+        
         //다크 모드
         function mode() {
             const isUserColorTheme = localStorage.getItem(MODE),
@@ -136,7 +159,6 @@
                 localStorage.setItem(MODE, 'light');
                 document.documentElement.setAttribute('color-theme', 'light');
             }
-            console.log(isOsColorTheme);
         }
 
         function chageMode(e) {
