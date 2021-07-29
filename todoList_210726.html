@@ -135,6 +135,8 @@
         function loadToDoList() {
             const loadedList = getDataFromLocalStorage(TODO_LS);
 
+
+            
             if(!loadedList) {
                 const parsedList = JSON.parse(loadedList);
                 if(!parsedList) return;
