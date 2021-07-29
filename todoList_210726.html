@@ -134,10 +134,8 @@
         // localStorage에서 값 받아오기     
         function loadToDoList() {
             const loadedList = getDataFromLocalStorage(TODO_LS);
-
-
             
-            if(!loadedList) {
+            if(loadedList) {
                 const parsedList = JSON.parse(loadedList);
                 if(!parsedList) return;
                 parsedList.forEach(function(todo) {
