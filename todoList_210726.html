@@ -29,11 +29,11 @@
 <body>
     <div class="wrap themed">
         <header>
-            <h1>오늘의 할일</h1>
             <div class="darkModeBtn">
                 <span>다크모드</span>
                 <input type="checkbox" class="mode"/>
             </div>
+            <h1>오늘의 할일</h1>
         </header>
         <section>
             <form id="inputForm">
@@ -44,14 +44,14 @@
     </div>
     <script>
 
-        const inputForm = document.querySelector('#inputForm'),
-            input = inputForm.querySelector('input'),
-            toDoList = document.querySelector('.toDoList'),
-            checkMode = document.querySelector('.mode');
+        const inputForm = document.querySelector('#inputForm'), //검색 폼
+            input = inputForm.querySelector('input'), //검색 input창
+            toDoList = document.querySelector('.toDoList'), //할 일 리스트 
+            checkMode = document.querySelector('.mode'); //다크모드 
 
-        const TODO_LS = "TODO",
-            MODE = "MODE";
-
+        const TODO_LS = "TODO", //localStorage 할 일 Key
+            MODE = "MODE"; //localStorage 다크모드 Key
+ 
         let todo = [];
 
         // 할 일 입력
@@ -69,7 +69,7 @@
             localStorage.setItem(TODO_LS, JSON.stringify(todo));
         }
 
-
+        // localStorage Value
         function setToDoList(currentValue) {
             const newId = todo.length + 1;
             const toDoObj = {
@@ -80,18 +80,14 @@
             todo.push(toDoObj);
         }
 
-
-        //해결이 안되는 부분!!!
+        // 할 일 완료
         function checkToDoList(status) {
-            
             const checkedBtn = event.target;
             if (checkedBtn.type !== 'checkbox') return; 
 
             const li = checkedBtn.parentNode;
             const targetId = parseInt(li.id, 10);
             const toDoList = JSON.parse(localStorage.getItem(TODO_LS));
-            console.log(targetId);
-            console.log(JSON.stringify(toDoList));
 
             toDoList.forEach((el) => {
                 if(targetId === el.id){
@@ -101,16 +97,15 @@
             console.log(JSON.stringify(toDoList));
 
             todo = toDoList;
-            console.log(todo);
             saveToDoList();
         }
 
         // 할 일 리스트 화면에 뿌리기
-        function printToDoList(currentValue, currentStatus) {
+        function printToDoList(currentValue, currentStatus, currentId) {
             const li = document.createElement('li');
             const checkBtn = document.createElement('input');
             const span = document.createElement('span');
-            const newId = todo.length + 1;
+            const newId = currentId ? currentId : todo.length + 1;
 
             checkBtn.type = 'checkbox'
             checkBtn.addEventListener('click', checkToDoList);
@@ -126,20 +121,22 @@
 
         }
         
+        // localStorage에서 값 받아오기   
         function getDataFromLocalStorage(key) {
             if(key === null) return false;
             return localStorage.getItem(key);
         }
 
-        // localStorage에서 값 받아오기     
+        // localStorage에서 할 일 값 받아오기   
         function loadToDoList() {
             const loadedList = getDataFromLocalStorage(TODO_LS);
-            
+            console.log(loadedList)
             if(loadedList) {
                 const parsedList = JSON.parse(loadedList);
+                todo = parsedList;
                 if(!parsedList) return;
                 parsedList.forEach(function(todo) {
-                    printToDoList(todo.text, todo.status);
+                    printToDoList(todo.text, todo.status, todo.id);
                 });
             }
         } 
