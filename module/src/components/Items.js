@@ -18,18 +18,16 @@ export default class Items extends Component {
             <button class="addBtn">추가</button>
         `
     }
-    setEvent() {
-        this.$target.addEventListener('click', ({ target }) => {
-            const items = [ ...this.$state.items ];
-
-            if(target.classList.contains('addBtn')) {
-                this.setState({ items: [ ...items, `item${items.length + 1}`] });
-            }
-            
-            if(target.classList.contains('deleteBtn')) {
-                items.splice(target.dataset.index, 1);
-                this.setState({ items });
-            }
+    setEvent () {
+        this.addEvent('click', '.addBtn', ({ target }) => {
+          const { items } = this.$state;
+          this.setState({ items: [ ...items, `item${items.length + 1}` ] });
+        });
+        
+        this.addEvent('click', '.deleteBtn', ({ target }) => {
+          const items = [ ...this.$state.items ];
+          items.splice(target.dataset.index, 1);
+          this.setState({ items });
         });
     }
 }
